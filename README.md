@@ -118,7 +118,17 @@ screenshots/      演示截图
 - [`docs/交给执行AI-任务说明书.md`](docs/交给执行AI-任务说明书.md) —— 交给另一个 AI 执行同类迁移时的约束与验收清单
 - [`docs/图标说明-NOTICE.md`](docs/图标说明-NOTICE.md) —— 图标来源与使用边界
 
+## 作者
+
+| 角色 | 署名 | 负责内容 |
+|---|---|---|
+| 作者 / 发起者 | **wwu328763-netizen** | 项目发起、需求与设计取舍、验收 |
+| AI 协作 | **DeepSeek Harness（deepseek-flash）** | 代码实现、界面重构、文档、图标、发布 |
+
+> 详细分工见 [AUTHORS.md](AUTHORS.md)。
+
 ## 特别鸣谢
+
 
 - **内核： [`jmcomic`](https://pypi.org/project/jmcomic/)（JMComic-Crawler-Python）— 作者 [hect0x7](https://github.com/hect0x7/JMComic-Crawler-Python)**
   本项目的下载、搜索、详情解析、图片 URL 解密等能力全部来自这个库；

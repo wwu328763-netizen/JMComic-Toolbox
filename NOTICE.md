@@ -7,3 +7,9 @@
 - **内核依赖 [`jmcomic`](https://pypi.org/project/jmcomic/)（作者 [hect0x7](https://github.com/hect0x7/JMComic-Crawler-Python)）**，
   下载/搜索/解析能力均来自该项目，遵循其许可证；在此特别鸣谢。
 - 其他第三方依赖：`pywebview`、`pythonnet`、`Pillow`、`PyInstaller`，遵循各自许可证。
+
+## 作者与 AI 协作声明
+
+- 项目作者：wwu328763-netizen（著作权人）
+- AI 协作：DeepSeek Harness（deepseek-flash），承担代码实现、界面重构、文档与图标制作
+- 本声明不改变代码的 MIT 许可与上述著作权归属
