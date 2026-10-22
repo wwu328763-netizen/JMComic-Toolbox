@@ -1763,3 +1763,26 @@ window.addEventListener('pywebviewready', () => {
     });
   }
 });
+
+
+/* 封面缺失时用"首字 + 渐变"占位（关注页/作者无本地作品时） */
+(function patchCoverPlaceholder() {
+  const prev = renderGrid;
+  renderGrid = function () {
+    prev();
+    try {
+      const cards = document.querySelectorAll('#grid .card');
+      (S.items || []).forEach((it, i) => {
+        const c = cards[i];
+        if (!c || it.cover) return;
+        const box = c.querySelector('.cover');
+        if (!box || box.querySelector('.cover-ph')) return;
+        const ph = document.createElement('div');
+        ph.className = 'cover-ph';
+        const label = (it.title || it.authorName || '?').trim().charAt(0);
+        ph.textContent = label;
+        box.appendChild(ph);
+      });
+    } catch (e) { /* 忽略 */ }
+  };
+})();
