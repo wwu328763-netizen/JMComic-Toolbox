@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-"""JMComic 工具箱图标 —— 原创构图（借用官方配色，不复刻官方吉祥物/字标）
+"""JMComic 工具箱图标 —— 橙色大眼睛吉祥物（个人自用版）
 
-设计
-  · 橙色渐变底（官方配色 #F9A22E → #E45827）+ 圆角超椭圆
-  · 一张微旋 -4° 的漫画分格：米白纸面 + 粗黑边框
-  · 分格内一支黑色墨箭头（下载语义），箭头上方留白
-  · 左上角网点（screentone）做漫画阴影，底部一条细速度线
-  · ≤32px 简化：去网点、放大箭头与边框、加大留白
+说明
+  · 形象来源：站点 favicon 的"橙色圆团 + 一只大眼睛"，重绘为高分辨率
+  · 仅个人使用，不建议随包分发（含对官方形象的重绘）
+  · 橙色渐变底（squircle）+ 圆团身体（白描边 + 黑描边）
+  · 左侧小耳朵凸起；一只漫画大眼（白眼球 + 黑瞳 + 高光）；腮红
+  · ≤32px 自动简化：放大眼睛、加粗描边、去掉腮红
 
 用法：python tools/make_icon.py   -> icon.ico + icon-preview.png
 """
@@ -22,10 +22,10 @@ ICO = os.path.join(ROOT, 'icon.ico')
 PREVIEW = os.path.join(ROOT, 'icon-preview.png')
 
 N = 4.6
-ORANGE = (249, 162, 46)
-ORANGE_D = (228, 88, 39)
-INK = (12, 8, 8)
-CREAM = (250, 245, 234)
+ORANGE = (247, 157, 40, 255)
+ORANGE_D = (228, 88, 39, 255)
+INK = (10, 6, 6, 255)
+WHITE = (255, 255, 255, 255)
 SIZES = [16, 20, 24, 32, 40, 48, 64, 96, 128, 256]
 
 
@@ -39,37 +39,13 @@ def squircle(size, n=N):
 
 def vgrad(size, top, bottom):
     t = np.linspace(0, 1, size, dtype=np.float32).reshape(size, 1, 1)
-    a = np.array(top, np.float32).reshape(1, 1, 3)
-    b = np.array(bottom, np.float32).reshape(1, 1, 3)
+    a = np.array(top[:3], np.float32).reshape(1, 1, 3)
+    b = np.array(bottom[:3], np.float32).reshape(1, 1, 3)
     return Image.fromarray(np.repeat(a + (b - a) * t, size, axis=1).astype(np.uint8), 'RGB')
 
 
-def halftone(size, step, cx, cy, radius, maxr=.28, alpha=170):
-    layer = Image.new('RGBA', (size, size), (0, 0, 0, 0))
-    d = ImageDraw.Draw(layer)
-    s = max(4, int(step))
-    for y in range(0, size, s):
-        for x in range(0, size, s):
-            k = max(0.0, 1 - np.hypot((x - cx * size) / size, (y - cy * size) / size) / radius)
-            r = int(s * maxr * k ** 1.25)
-            if r >= 1:
-                d.ellipse([x - r, y - r, x + r, y + r], fill=INK + (alpha,))
-    return layer
-
-
-def arrow_mask(size, total_h, stem_w, cx=.5, cy=.5):
-    m = Image.new('L', (size, size), 0)
-    d = ImageDraw.Draw(m)
-    Cx, Cy = cx * size, cy * size
-    stem_h = total_h * .52
-    head_w = stem_w * 1.75
-    top = Cy - total_h / 2
-    rad = stem_w / 2
-    d.rounded_rectangle([Cx - stem_w / 2, top, Cx + stem_w / 2, top + stem_h + rad],
-                        radius=rad, fill=255)
-    d.polygon([(Cx - head_w / 2, top + stem_h), (Cx + head_w / 2, top + stem_h),
-               (Cx, top + total_h)], fill=255)
-    return m
+def dilate(mask, w):
+    return mask.filter(ImageFilter.MaxFilter(w * 2 + 1))
 
 
 def render(size):
@@ -80,41 +56,53 @@ def render(size):
     img = Image.new('RGBA', (S, S), (0, 0, 0, 0))
     img.paste(vgrad(S, ORANGE, ORANGE_D).convert('RGBA'), (0, 0), squircle(S))
 
-    page = Image.new('RGBA', (S, S), (0, 0, 0, 0))
-    d = ImageDraw.Draw(page)
-    inset = .085 if small else .115
-    x0, y0 = int(S * inset), int(S * inset)
-    x1, y1 = int(S * (1 - inset)), int(S * (1 - inset))
-    lw = max(3, int(S * (.040 if small else .024)))
-    radius = int(S * (.020 if not small else .030))
-    d.rounded_rectangle([x0, y0, x1, y1], radius=radius, fill=CREAM + (255,))
-    d.rectangle([x0, y0, x1, y1], outline=INK + (255,), width=lw)
+    # ---- 身体：圆团 + 左侧小耳 ----
+    body = Image.new('L', (S, S), 0)
+    d = ImageDraw.Draw(body)
+    cx, cy = S * .52, S * .53
+    bw, bh = S * .285, S * .255
+    d.ellipse([cx - bw, cy - bh, cx + bw, cy + bh], fill=255)
+    d.ellipse([cx - bw * 1.30, cy + bh * .10, cx - bw * .70, cy + bh * .58], fill=255)
+
+    # 白描边 → 黑描边 → 橙色身体
+    halo_w = max(3, int(S * (.026 if not small else .038)))
+    white = Image.new('RGBA', (S, S), (0, 0, 0, 0))
+    white.paste(Image.new('RGBA', (S, S), WHITE), (0, 0), dilate(body, halo_w))
+    img.alpha_composite(white)
+    line_w = max(2, int(S * (.012 if not small else .018)))
+    black = Image.new('RGBA', (S, S), (0, 0, 0, 0))
+    black.paste(Image.new('RGBA', (S, S), INK), (0, 0), dilate(body, line_w))
+    img.alpha_composite(black)
+    bodyc = Image.new('RGBA', (S, S), (0, 0, 0, 0))
+    bodyc.paste(vgrad(S, (252, 170, 52, 255), ORANGE_D).convert('RGBA'), (0, 0), body)
+    img.alpha_composite(bodyc)
+
+    d2 = ImageDraw.Draw(img)
+    # ---- 大眼睛 ----
+    ex = cx + bw * (.22 if not small else .12)
+    ey = cy - bh * (.14 if not small else .06)
+    er = S * (.150 if not small else .190)
+    d2.ellipse([ex - er, ey - er * 1.08, ex + er, ey + er * 1.08], fill=WHITE,
+               outline=INK, width=max(2, int(S * (.012 if not small else .022))))
+    pr = er * (.54 if not small else .58)
+    d2.ellipse([ex - pr * .55, ey - pr, ex + pr * 1.45, ey + pr], fill=INK)
+    hr = er * (.24 if not small else .30)
+    hx = ex + er * .12
+    hy = ey - er * .60
+    d2.ellipse([hx, hy, hx + hr * 2, hy + hr * 2], fill=WHITE)
 
     if not small:
-        # 左上角网点
-        page.alpha_composite(halftone(S, S // 34, cx=.20, cy=.17, radius=.30))
-        # 底部速度线
-        d.line([(x0 + int(S * .06), y1 - int(S * .085)),
-                (x1 - int(S * .20), y1 - int(S * .100))],
-               fill=INK + (200,), width=max(2, int(S * .012)))
+        # 腮红
+        blush = Image.new('RGBA', (S, S), (0, 0, 0, 0))
+        bd = ImageDraw.Draw(blush)
+        bd.ellipse([cx + bw * .62, cy + bh * .22, cx + bw * .92, cy + bh * .46],
+                   fill=(255, 96, 96, 150))
+        blush = blush.filter(ImageFilter.GaussianBlur(int(S * .012)))
+        img.alpha_composite(blush)
 
-    # 墨箭头
-    ah = .50 if small else .46
-    aw = .115 if small else .098
-    m = arrow_mask(S, S * ah, S * aw, cx=.52, cy=.50)
-    blk = Image.new('RGBA', (S, S), (0, 0, 0, 0))
-    blk.paste(Image.new('RGBA', (S, S), INK + (255,)), (0, 0), m)
-    page.alpha_composite(blk)
-
-    if small:
-        page = page.rotate(-3, resample=Image.BICUBIC, center=(S // 2, S // 2))
-    else:
-        page = page.rotate(-4, resample=Image.BICUBIC, center=(S // 2, S // 2))
-    img.alpha_composite(page)
-
-    out = Image.new('RGBA', (S, S), (0, 0, 0, 0))
-    out.paste(img, (0, 0), squircle(S))
-    return out.resize((size, size), Image.LANCZOS)
+    final = Image.new('RGBA', (S, S), (0, 0, 0, 0))
+    final.paste(img, (0, 0), squircle(S))
+    return final.resize((size, size), Image.LANCZOS)
 
 
 def write_ico(path, images):

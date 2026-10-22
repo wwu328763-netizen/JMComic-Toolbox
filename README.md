@@ -1,5 +1,7 @@
 # JMComic 工具箱
 
+<img src="screenshots/icon-preview.png" width="96" align="left" alt="icon">
+
 > 一个自用的桌面漫画下载 / 阅读工具：**WebView2 界面 + Python 内核**，
 > 支持批量下载、内置阅读器、追更关注、导出 PDF/ZIP。
 
@@ -114,7 +116,17 @@ screenshots/      演示截图
 - [`docs/交给执行AI-任务说明书.md`](docs/交给执行AI-任务说明书.md) —— 交给另一个 AI 执行同类迁移时的约束与验收清单
 - [`docs/图标说明-NOTICE.md`](docs/图标说明-NOTICE.md) —— 图标来源与使用边界
 
+## 特别鸣谢
+
+- **内核： [`jmcomic`](https://pypi.org/project/jmcomic/)（JMComic-Crawler-Python）— 作者 [hecaihao](https://github.com/hecaihao)**
+  本项目的下载、搜索、详情解析、图片 URL 解密等能力全部来自这个库；
+  没有它就没有这个工具。请优先给上游项目点星支持。
+- 界面桥接：[pywebview](https://pywebview.flowrl.com/) + [pythonnet](https://github.com/pythonnet/pythonnet)（WebView2 宿主）
+- 打包：[PyInstaller](https://pyinstaller.org/)
+- 图像处理：[Pillow](https://python-pillow.org/)
+
 ## 已知限制
+
 
 - 仅 Windows（依赖 WebView2）
 - 站点详情接口较慢，搜索结果卡片里的页数/话数是异步补全的（分批回填）
