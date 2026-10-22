@@ -2,6 +2,12 @@
 
 **由 [wwu328763-netizen](https://github.com/wwu328763-netizen) 与 DeepSeek Harness（deepseek-flash）协作完成**
 
+> [!IMPORTANT]
+> **网络要求：需要代理 / VPN。** 目标站点在多数网络环境下无法直连，
+> 不挂代理（或代理未开 TUN / 未配到 `option.yml`）时，**搜索、下载、检查更新都不可用**；
+> 但**已下载内容的阅读、导出、整理完全离线可用**。
+> 详细配置与排查见 [docs/网络与代理.md](docs/网络与代理.md)。
+
 <img src="screenshots/icon-preview.png" width="96" align="left" alt="icon">
 
 > 一个自用的桌面漫画下载 / 阅读工具：**WebView2 界面 + Python 内核**，
@@ -51,6 +57,14 @@
    ↕  普通函数调用
 核心层   src/jmapp.py                              下载 / 解析 / 搜索 / 导出 / 历史（不 import tkinter）
 ```
+
+## 网络要求（需要代理 / VPN）
+
+见 [docs/网络与代理.md](docs/网络与代理.md)。要点：
+
+- **搜索 / 下载 / 检查更新**：需要能访问目标站点的网络（通常需代理或 VPN）
+- **阅读已下载内容 / 导出 / 整理**：完全离线可用
+- 推荐开系统级 TUN 接管；也可以只在 `option.yml` 里配 `client.proxy`
 
 ## 快速开始（源码运行）
 
@@ -107,6 +121,7 @@ screenshots/      演示截图
 
 ## 文档
 
+- [`docs/网络与代理.md`](docs/网络与代理.md) —— **需要代理/VPN 的原因、配置与排查**
 - [`docs/Tkinter转WebView2界面-迁移指南.md`](docs/Tkinter转WebView2界面-迁移指南.md) —— 把任意 Tkinter 程序改成 WebView2 界面的完整方法（含 12 个坑）
 - [`docs/交给执行AI-任务说明书.md`](docs/交给执行AI-任务说明书.md) —— 交给另一个 AI 执行同类迁移时的约束与验收清单
 - [`docs/图标说明-NOTICE.md`](docs/图标说明-NOTICE.md) —— 图标来源与使用边界

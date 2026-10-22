@@ -59,6 +59,8 @@
 
 ---
 
+> ⚠️ 搜索与下载需要**能访问目标站点**的网络（通常需要代理/VPN），详见 [docs/网络与代理.md](docs/网络与代理.md)。
+
 ## 3. 搜索
 
 ![搜索结果](screenshots/search-results.png)
