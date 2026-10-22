@@ -118,7 +118,7 @@ screenshots/      演示截图
 
 ## 特别鸣谢
 
-- **内核： [`jmcomic`](https://pypi.org/project/jmcomic/)（JMComic-Crawler-Python）— 作者 [hecaihao](https://github.com/hecaihao)**
+- **内核： [`jmcomic`](https://pypi.org/project/jmcomic/)（JMComic-Crawler-Python）— 作者 [hect0x7](https://github.com/hect0x7/JMComic-Crawler-Python)**
   本项目的下载、搜索、详情解析、图片 URL 解密等能力全部来自这个库；
   没有它就没有这个工具。请优先给上游项目点星支持。
 - 界面桥接：[pywebview](https://pywebview.flowrl.com/) + [pythonnet](https://github.com/pythonnet/pythonnet)（WebView2 宿主）
