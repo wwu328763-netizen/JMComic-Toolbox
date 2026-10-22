@@ -1,0 +1,25 @@
+# JMComic 自用 QQ 机器人配置
+# 改完保存，重启机器人（关闭窗口再双击 启动机器人.cmd）生效。
+
+# 白名单：只有这些 QQ 号发的【私聊】才会被处理。
+# 填你自己的 QQ 号；留空 = 谁都不理（这是故意的安全默认值）。
+owners:
+  - 123456789
+
+# NapCat 的 HTTP 服务端地址（机器人用它发消息 / 发文件）
+api: 'http://127.0.0.1:3000'
+# NapCat HTTP 服务端如果设了 token，填这里
+api_token: "CHANGE_ME"
+
+# 机器人的上报服务（NapCat 的「HTTP 上报 / 反向 HTTP」要指向这里）
+report_host: '127.0.0.1'
+report_port: 8099
+# 上报 token：和 NapCat 上报地址里带的 token 一致（建议改成随机字符串）
+report_token: "CHANGE_ME"
+
+# 导出时是否同时发 ZIP（false = 只发 PDF）
+send_zip: true
+# 单个文件超过这个大小就不真正发给 QQ（MB，0 = 不限制）
+max_send_mb: 120
+# 超过这么多页的本子拒绝下载（防误触发大流量，0 = 不限制）
+max_download_pages: 400

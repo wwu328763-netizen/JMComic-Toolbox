@@ -1,0 +1,165 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>JMComic</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="dark">
+
+<!-- ───────────── 左侧导航 ───────────── -->
+<aside class="sidebar">
+  <div class="logo" title="JMComic 工具箱">
+    <svg viewBox="0 0 24 24" width="22" height="22"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5A2.5 2.5 0 0 1 17.5 21H6.5A2.5 2.5 0 0 1 4 18.5v-13Zm3 .5v12h9V6H7Z"/></svg>
+  </div>
+
+  <nav class="nav">
+    <button class="nav-item is-active" data-view="local" title="已下载">
+      <svg viewBox="0 0 24 24"><path d="M4 5h16v3H4V5Zm0 5.5h16v3H4v-3ZM4 16h10v3H4v-3Z"/></svg>
+      <span>已下载</span>
+    </button>
+    <button class="nav-item" data-view="history" title="历史">
+      <svg viewBox="0 0 24 24"><path d="M12 4a8 8 0 1 1-7.4 5H7a6 6 0 1 0 .3 2.8L10 14v2.2l-3.6-3.6.4-.3A8 8 0 0 1 12 4Zm-1 4h2v5l3.2 1.9-1 1.7L11 14.2V8Z"/></svg>
+      <span>历史</span>
+    </button>
+    <button class="nav-item" data-view="watch" title="关注（追更）">
+      <svg viewBox="0 0 24 24"><path d="M12 3.6l2.5 5.1 5.6.8-4 4 .9 5.6-5-2.7-5 2.7.9-5.6-4-4 5.6-.8L12 3.6Z"/></svg>
+      <span>关注</span>
+    </button>
+    <button class="nav-item" data-view="results" title="搜索结果">
+      <svg viewBox="0 0 24 24"><path d="M10.5 3a7.5 7.5 0 0 1 5.9 12.1l4.3 4.3-1.4 1.4-4.3-4.3A7.5 7.5 0 1 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z"/></svg>
+      <span>搜索</span>
+    </button>
+  </nav>
+
+  <div class="sidebar-foot">
+    <button id="themeBtn" class="icon-btn" title="切换主题">
+      <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 1-8.9 10.3A7 7 0 0 0 12 3Z"/></svg>
+    </button>
+    <button id="folderBtn" class="icon-btn" title="打开下载文件夹">
+      <svg viewBox="0 0 24 24"><path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H9l2 2h8.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5v-11Z"/></svg>
+    </button>
+  </div>
+</aside>
+
+<!-- ───────────── 主区域 ───────────── -->
+<main class="main">
+  <header class="topbar">
+    <div class="searchbar">
+      <svg class="search-icon" viewBox="0 0 24 24"><path d="M10.5 3a7.5 7.5 0 0 1 5.9 12.1l4.3 4.3-1.4 1.4-4.3-4.3A7.5 7.5 0 1 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z"/></svg>
+      <input id="q" type="text" placeholder="车号，或搜索本子名 / 作者名（支持 +包含 -排除）" autocomplete="off" spellcheck="false">
+      <div class="seg" id="kindSeg">
+        <button class="seg-btn is-active" data-kind="all">全部</button>
+        <button class="seg-btn" data-kind="work">本子</button>
+        <button class="seg-btn" data-kind="author">作者</button>
+      </div>
+    </div>
+    <button id="downloadBtn" class="btn btn-primary">
+      <svg viewBox="0 0 24 24"><path d="M12 3v10.2l3.6-3.6 1.4 1.4L12 17 6.9 11l1.4-1.4L12 13.2V3h0ZM5 19h14v2H5v-2Z"/></svg>
+      下载
+    </button>
+    <button id="queryBtn" class="btn btn-ghost">查询</button>
+    <button id="cancelBtn" class="btn btn-danger" disabled>取消</button>
+    <select id="sortSel" class="top-select" style="display:none" title="排序">
+      <option value="recent">最近下载</option>
+      <option value="name">按名称</option>
+      <option value="pages">按页数</option>
+      <option value="chapters">按话数</option>
+      <option value="author">按作者</option>
+      <option value="unread">未读优先</option>
+    </select>
+    <button id="watchCheck" class="btn btn-ghost" style="display:none">检查更新</button>
+    <select id="orderSel" class="top-select" title="排序方式">
+      <option value="mr">最新</option>
+      <option value="mv">最多观看</option>
+      <option value="tf">最多点赞</option>
+      <option value="mp">最多图片</option>
+      <option value="tr">最高评分</option>
+      <option value="md">最多评论</option>
+    </select>
+    <select id="timeSel" class="top-select" title="时间范围">
+      <option value="a">全部时间</option>
+      <option value="t">今天</option>
+      <option value="w">本周</option>
+      <option value="m">本月</option>
+    </select>
+  </header>
+
+  <div id="queueBar" class="queue-bar" style="display:none"></div>
+
+  <!-- 内容：封面网格 / 详情 -->
+  <section class="content">
+    <div id="grid" class="grid"></div>
+
+    <div id="empty" class="empty">
+      <div class="empty-art">
+        <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5A2.5 2.5 0 0 1 17.5 21H6.5A2.5 2.5 0 0 1 4 18.5v-13Zm3 .5v12h9V6H7Z"/></svg>
+      </div>
+      <p class="empty-title">这里还是空的</p>
+      <p class="empty-sub">在上面的输入框填车号（如 <code>350234</code>），或搜本子名 / 作者名</p>
+    </div>
+  </section>
+
+  <!-- 详情抽屉 -->
+  <div id="sheetMask" class="sheet-mask"></div>
+  <aside id="sheet" class="sheet">
+    <button id="sheetClose" class="sheet-close" title="关闭">✕</button>
+    <div class="sheet-cover"><img id="sheetImg" alt=""></div>
+    <div class="sheet-info">
+      <h2 id="sheetTitle">—</h2>
+      <div id="sheetChips" class="chips"></div>
+      <div id="sheetTags" class="sheet-tags"></div>
+      <div class="sheet-actions">
+        <button id="actRead" class="btn btn-primary">▶ 阅读</button>
+        <button id="actFolder" class="btn btn-ghost">文件夹</button>
+        <button id="actPdf" class="btn btn-ghost">导出 PDF</button>
+        <button id="actZip" class="btn btn-ghost">导出 ZIP</button>
+        <button id="actDel" class="btn btn-danger">删除</button>
+        <button id="actWatch" class="btn btn-ghost">关注</button>
+        <button id="actUpdate" class="btn btn-ghost">下载 / 更新</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 底部状态 / 日志 -->
+  <footer class="statusbar">
+    <div class="progress"><div id="progressFill" class="progress-fill"></div></div>
+    <div class="status-row">
+      <span id="statusText" class="status-text">就绪</span>
+      <span id="pctText" class="pct"></span>
+      <button id="logToggle" class="link-btn">日志 ▾</button>
+    </div>
+    <div id="logPanel" class="log-panel">
+      <div id="logList" class="log-list"></div>
+    </div>
+  </footer>
+</main>
+
+<!-- ───────────── 阅读器（同窗口内联，不弹新窗口） ───────────── -->
+<section id="reader" class="reader">
+  <header class="reader-bar">
+    <button id="rdBack" class="rd-btn rd-back" title="返回（Esc）">← 返回</button>
+    <span id="rdTitle" class="rd-title"></span>
+    <div class="rd-tools">
+      <select id="rdChapter" class="rd-select" title="切换章节"></select>
+      <button id="rdMode" class="rd-btn" title="单页 / 滚动">单页</button>
+      <button id="rdZoomOut" class="rd-btn" title="缩小（Ctrl+滚轮）">−</button>
+      <span id="rdZoomTxt" class="rd-zoom">100%</span>
+      <button id="rdZoomIn" class="rd-btn" title="放大（Ctrl+滚轮）">＋</button>
+      <select id="rdFitMode" class="rd-select" title="适应方式"><option value="contain">适应</option><option value="width">宽度</option><option value="height">高度</option></select>
+      <button id="rdZoomFit" class="rd-btn" title="适应窗口（0）">适应</button>
+      <button id="rdTheme" class="rd-btn rd-theme" title="切换主题">主题</button>
+    </div>
+    <span id="rdPage" class="rd-page">0 / 0</span>
+  </header>
+  <div id="rdView" class="reader-view">
+    <div id="rdCanvas" class="reader-canvas"><img id="rdImg" alt="" draggable="false"><img id="rdImg2" alt="" draggable="false" style="display:none"></div>
+  </div>
+  <div id="rdScroll" class="reader-scroll"></div>
+</section>
+
+<div id="toasts" class="toasts"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

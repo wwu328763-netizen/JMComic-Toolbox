@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# 构建产物
+*.exe
+*.spec
+build/
+dist/
+!webui/build_web.ps1
+
+# 个人数据 / 运行期文件
+history.json
+watch.json
+ui.json
+option.yml
+jmcomic-download.log
+exports/
+downloads/
+bot/bot_config.yml
+bot/bot.log
+icon-*.ico
+
+# 编辑器
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

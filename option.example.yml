@@ -1,0 +1,18 @@
+# JMComic CLI 配置文件
+# 由快捷方式自动通过 JM_OPTION_PATH 加载
+
+dir_rule:
+  # 下载保存位置。不写这一项时，会存到"运行命令时的当前目录"
+  base_dir: ./downloads
+  rule: 'Bd/[JM{Aid}] {Aauthor} - {Atitle}/{Pindex:03d}-{Pname}'
+
+download:
+  threading:
+    # 并发数调低一点，减轻禁漫服务器压力（内置默认是 image:20 / photo:32）
+    image: 8
+    photo: 4
+
+# 想转格式/转 PDF 等，取消下面注释（需要额外装插件依赖）
+# download:
+#   image:
+#     suffix: .png
