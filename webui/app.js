@@ -1786,3 +1786,77 @@ window.addEventListener('pywebviewready', () => {
     } catch (e) { /* 忽略 */ }
   };
 })();
+
+
+/* ============================================================
+   网络与登录设置
+   ============================================================ */
+async function openNet() {
+  const m = $('#netModal');
+  if (!m) return;
+  m.classList.add('on');
+  $('#netStatus').className = 'net-status';
+  $('#netStatus').textContent = '加载中…';
+  try {
+    const s = await api().net_get();
+    $('#netProxy').value = s.proxy || '';
+    $('#netDomain').value = s.domain || '';
+    $('#netUser').value = s.username || '';
+    $('#netPass').value = '';
+    $('#netCookie').value = '';
+    $('#netCookie').placeholder = s.cookie_count
+      ? ('已保存 ' + s.cookie_count + ' 项：' + (s.cookie_preview || '') + '（粘贴新串可覆盖）')
+      : 'AVS=...; yp_uid=...';
+    const st = $('#netStatus');
+    st.className = 'net-status' + (s.logged_in ? ' ok' : '');
+    st.textContent = s.logged_in
+      ? ('已登录（Cookie ' + s.cookie_count + ' 项）')
+      : '未登录（未登录时，仅部分内容可见）';
+  } catch (e) {
+    $('#netStatus').textContent = '读取失败：' + e;
+  }
+}
+
+function closeNet() {
+  const m = $('#netModal');
+  if (m) m.classList.remove('on');
+}
+
+async function saveNet() {
+  const st = $('#netStatus');
+  st.className = 'net-status';
+  st.textContent = '保存中…（登录可能需要几秒）';
+  const r = await api().net_save(
+    $('#netProxy').value, $('#netDomain').value,
+    $('#netUser').value, $('#netPass').value, $('#netCookie').value);
+  st.className = 'net-status' + (r.ok ? ' ok' : ' err');
+  st.textContent = r.msg || (r.ok ? '已保存' : '保存失败');
+  toast(st.textContent, r.ok ? 'ok' : 'err');
+  if (r.ok) { $('#netPass').value = ''; $('#netCookie').value = ''; }
+}
+
+async function testNet() {
+  const st = $('#netStatus');
+  st.className = 'net-status';
+  st.textContent = '测试中…';
+  const r = await api().net_test();
+  st.className = 'net-status' + (r.ok ? ' ok' : ' err');
+  st.textContent = r.msg || (r.ok ? '连接正常' : '连接失败');
+  toast(st.textContent, r.ok ? 'ok' : 'err');
+}
+
+window.addEventListener('pywebviewready', () => {
+  const btn = $('#netBtn');
+  if (btn) btn.onclick = () => openNet();
+  const c = $('#netClose');
+  if (c) c.onclick = closeNet;
+  const s = $('#netSave');
+  if (s) s.onclick = saveNet;
+  const t = $('#netTest');
+  if (t) t.onclick = testNet;
+  const m = $('#netModal');
+  if (m) m.addEventListener('click', (e) => { if (e.target === m) closeNet(); });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeNet();
+  });
+});

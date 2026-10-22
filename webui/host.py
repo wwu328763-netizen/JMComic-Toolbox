@@ -237,6 +237,24 @@ def _history_items(server_url):
     return out
 
 
+def _parse_cookie(text):
+    """把浏览器复制的 Cookie 串解析成 dict"""
+    out = {}
+    if not text:
+        return out
+    raw = str(text).replace('\n', ';')
+    for part in raw.split(';'):
+        part = part.strip()
+        if not part or '=' not in part:
+            continue
+        k, v = part.split('=', 1)
+        k = k.strip().strip('"').strip("'")
+        v = v.strip().strip('"').strip("'")
+        if k and len(k) < 64:
+            out[k] = v
+    return out
+
+
 def _meta_text(pages, chapters, authors, tags, limit_tags=36):
     bits = []
     if pages:
@@ -365,6 +383,7 @@ class Api:
         if self._opt is None:
             install_log_hook()
             opt, base = jmapp.build_option()
+            self._net_apply(opt)
             override = os.environ.get('JMCOMIC_BASE') or ''
             if override and os.path.isdir(override):
                 base = override
@@ -372,6 +391,105 @@ class Api:
             if self.server is None:
                 self.server, self.server_url = start_image_server(base)
         return self._opt
+
+    # ---------------------------------------------------------- 网络与登录设置
+    def _net_cfg(self):
+        n = jmapp.load_ui_settings().get('net')
+        return n if isinstance(n, dict) else {}
+
+    def _net_write(self, d):
+        s = jmapp.load_ui_settings()
+        s['net'] = d
+        jmapp.save_ui_settings(s)
+        self._opt = None            # 下次重建 JmOption 时套用
+
+    def _net_apply(self, opt):
+        n = self._net_cfg()
+        if not n:
+            return
+        try:
+            if n.get('proxy'):
+                opt.client['proxies'] = str(n['proxy']).strip()
+            if n.get('domain'):
+                opt.client['domain'] = str(n['domain']).strip()
+            ck = n.get('cookies')
+            if isinstance(ck, dict) and ck:
+                cur = dict(opt.client.get('cookies') or {})
+                cur.update(ck)
+                opt.client['cookies'] = cur
+            if n.get('proxy'):
+                for k in ('HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy'):
+                    os.environ.setdefault(k, str(n['proxy']).strip())
+        except Exception as e:
+            ST.log('应用网络设置失败：%s' % e, 'err')
+
+    def net_get(self):
+        n = self._net_cfg()
+        ck = n.get('cookies') if isinstance(n.get('cookies'), dict) else {}
+        preview = '; '.join('%s=%s' % (k, (str(v)[:5] + '…') if len(str(v)) > 7 else v)
+                            for k, v in list(ck.items())[:4])
+        return {'ok': True,
+                'proxy': n.get('proxy') or '',
+                'domain': n.get('domain') or '',
+                'username': n.get('username') or '',
+                'has_password': bool(n.get('password')),
+                'cookie_count': len(ck),
+                'cookie_preview': preview,
+                'logged_in': bool(ck.get('AVS'))}
+
+    def net_save(self, proxy='', domain='', username='', password='', cookie=''):
+        n = self._net_cfg()
+        n['proxy'] = (proxy or '').strip()
+        n['domain'] = (domain or '').strip()
+        if (username or '').strip():
+            n['username'] = username.strip()
+        if password:
+            n['password'] = password
+        if (cookie or '').strip():
+            ck = _parse_cookie(cookie)
+            if ck:
+                cur = dict(n.get('cookies') or {})
+                cur.update(ck)
+                n['cookies'] = cur
+                ST.log('已保存 Cookie（%d 项）' % len(ck), 'ok')
+        self._net_write(n)
+        msg = '已保存'
+        u, p = n.get('username') or '', n.get('password') or ''
+        if u and p:
+            ok, m = self._try_login(u, p)
+            msg = '已保存并登录成功' if ok else ('已保存，但登录失败：%s' % m)
+        ST.log('网络设置已更新：%s' % msg, 'ok')
+        return {'ok': True, 'msg': msg}
+
+    def _try_login(self, username, password):
+        try:
+            opt = self._ensure()
+            client = opt.new_jm_client()
+            client.login(username, password)
+            ck = dict(opt.client.get('cookies') or {})
+            if ck:
+                n = self._net_cfg()
+                cur = dict(n.get('cookies') or {})
+                cur.update(ck)
+                n['cookies'] = cur
+                self._net_write(n)
+            return True, 'OK'
+        except Exception as e:
+            return False, str(e)[:160]
+
+    def net_test(self):
+        import time as _t
+        t0 = _t.time()
+        try:
+            opt = self._ensure()
+            client = opt.new_jm_client()
+            page = client.search_site('zzz-not-exist-999', 1)
+            cost = _t.time() - t0
+            ck = opt.client.get('cookies') or {}
+            login = '已登录' if ck.get('AVS') else '未登录'
+            return {'ok': True, 'msg': '连接正常 · %.1fs · %s' % (cost, login)}
+        except Exception as e:
+            return {'ok': False, 'msg': '连接失败：%s' % str(e)[:180]}
 
     def settings(self):
         try:
