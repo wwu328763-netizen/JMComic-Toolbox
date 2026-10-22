@@ -1860,3 +1860,42 @@ window.addEventListener('pywebviewready', () => {
     if (e.key === 'Escape') closeNet();
   });
 });
+
+/* 网络上传/下载速度显示 */
+function fmtRate(bps) {
+  const n = Number(bps) || 0;
+  if (n < 1024) return Math.round(n) + ' B/s';
+  if (n < 1048576) return (n / 1024).toFixed(1) + ' KB/s';
+  return (n / 1048576).toFixed(2) + ' MB/s';
+}
+
+function fmtBytes(b) {
+  const n = Number(b) || 0;
+  if (n < 1024) return n + ' B';
+  if (n < 1048576) return (n / 1024).toFixed(1) + ' KB';
+  if (n < 1073741824) return (n / 1048576).toFixed(1) + ' MB';
+  return (n / 1073741824).toFixed(2) + ' GB';
+}
+
+let _netTimer = null;
+
+async function tickNet() {
+  try {
+    const r = await api().net_speed();
+    const el = document.getElementById('netSpeed');
+    if (!el) return;
+    if (!r || !r.ok) {
+      el.textContent = '↓ — ↑ —';
+      el.title = '网速不可用：' + ((r && r.msg) || 'psutil 未加载');
+      return;
+    }
+    el.textContent = '↓ ' + fmtRate(r.down) + '  ↑ ' + fmtRate(r.up);
+    el.title = '本次会话累计：下载 ' + fmtBytes(r.down_total) + ' / 上传 ' + fmtBytes(r.up_total);
+  } catch (e) { /* 忽略 */ }
+}
+
+window.addEventListener('pywebviewready', () => {
+  if (_netTimer) clearInterval(_netTimer);
+  _netTimer = setInterval(tickNet, 1000);
+  tickNet();
+});

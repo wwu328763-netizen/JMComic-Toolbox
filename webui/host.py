@@ -85,6 +85,7 @@ class State:
 
 
 ST = State()
+_NET_LAST = {'t': 0, 'sent': 0, 'recv': 0}   # 网络速率采样
 _DETAIL_CACHE = {}   # 车号 -> (时间戳, detail_info)
 
 
@@ -476,6 +477,26 @@ class Api:
             return True, 'OK'
         except Exception as e:
             return False, str(e)[:160]
+
+    def net_speed(self):
+        """系统级网络速率（上行/下行），供状态栏显示"""
+        global _NET_LAST
+        try:
+            import psutil
+            c = psutil.net_io_counters()
+            now = time.time()
+            last = _NET_LAST
+            if not last.get('t'):
+                up = down = 0.0
+            else:
+                dt = max(0.2, now - last['t'])
+                up = max(0.0, (c.bytes_sent - last['sent']) / dt)
+                down = max(0.0, (c.bytes_recv - last['recv']) / dt)
+            _NET_LAST = {'t': now, 'sent': c.bytes_sent, 'recv': c.bytes_recv}
+            return {'ok': True, 'up': up, 'down': down,
+                    'up_total': c.bytes_sent, 'down_total': c.bytes_recv}
+        except Exception as e:
+            return {'ok': False, 'msg': str(e)[:120]}
 
     def net_test(self):
         import time as _t

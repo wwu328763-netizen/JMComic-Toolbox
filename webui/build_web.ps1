@@ -20,6 +20,8 @@ python -m PyInstaller --noconfirm --onefile --windowed `
   --hidden-import webview.platforms.edgechromium `
   --hidden-import webview.platforms.winforms `
   --hidden-import clr `
+  --hidden-import psutil `
+  --collect-all psutil `
   --collect-all webview `
   --collect-all pythonnet `
   --collect-all clr_loader `
