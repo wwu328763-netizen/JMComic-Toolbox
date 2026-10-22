@@ -5,6 +5,8 @@
 > 一个自用的桌面漫画下载 / 阅读工具：**WebView2 界面 + Python 内核**，
 > 支持批量下载、内置阅读器、追更关注、导出 PDF/ZIP。
 
+**由 [wwu328763-netizen](https://github.com/wwu328763-netizen) 与 DeepSeek Harness（deepseek-flash）协作完成**
+
 <p align="left">
   <img alt="python" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white">
   <img alt="pywebview" src="https://img.shields.io/badge/UI-WebView2%20(pywebview)-4C8DFF">
