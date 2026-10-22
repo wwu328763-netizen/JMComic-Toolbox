@@ -27,7 +27,6 @@
 - **搜索**：站内搜索，支持官方排序（最新 / 最多观看 / 最多点赞 / 最多图片 / 最高评分 / 最多评论）与时间范围（全部 / 今天 / 本周 / 本月）
 - **主题**：深色 / 浅色 / 霓虹 / 樱花 / 跟随系统
 - **安全删除**：删除走 **回收站**（不直接抹盘），支持行内快捷删除
-- **自用 QQ 机器人**（可选）：OneBot 11 反向 HTTP，仅私聊 + 白名单
 
 > 想看每个功能的图文详解：[**FEATURES.md**](FEATURES.md)
 
@@ -95,20 +94,12 @@ cli\jm.cmd 350234           # 下载一本
 cli\jm.cmd --help
 ```
 
-## 自用 QQ 机器人（可选）
-
-见 [`bot/README-机器人.md`](bot/README-机器人.md)。复制 `bot/bot_config.example.yml` 为
-`bot/bot_config.yml` 并填入你的 OneBot 实现地址与**你自己的** QQ 号白名单。
-
-> 仅用于**自己**私聊使用；不含群聊分发逻辑。
-
 ## 目录结构
 
 ```
 webui/            界面层（HTML/CSS/JS + 宿主）
 src/jmapp.py      核心层（可单独 import 使用）
 cli/              命令行封装
-bot/              自用机器人（可选）
 tools/            构建脚本（图标生成、打包）
 docs/             迁移指南、执行说明书、图标说明
 screenshots/      演示截图
