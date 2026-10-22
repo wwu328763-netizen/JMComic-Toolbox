@@ -1,11 +1,11 @@
 # JMComic 工具箱
 
+**由 [wwu328763-netizen](https://github.com/wwu328763-netizen) 与 DeepSeek Harness（deepseek-flash）协作完成**
+
 <img src="screenshots/icon-preview.png" width="96" align="left" alt="icon">
 
 > 一个自用的桌面漫画下载 / 阅读工具：**WebView2 界面 + Python 内核**，
 > 支持批量下载、内置阅读器、追更关注、导出 PDF/ZIP。
-
-**由 [wwu328763-netizen](https://github.com/wwu328763-netizen) 与 DeepSeek Harness（deepseek-flash）协作完成**
 
 <p align="left">
   <img alt="python" src="https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white">
@@ -131,7 +131,6 @@ screenshots/      演示截图
 
 ## 特别鸣谢
 
-
 - **内核： [`jmcomic`](https://pypi.org/project/jmcomic/)（JMComic-Crawler-Python）— 作者 [hect0x7](https://github.com/hect0x7/JMComic-Crawler-Python)**
   本项目的下载、搜索、详情解析、图片 URL 解密等能力全部来自这个库；
   没有它就没有这个工具。请优先给上游项目点星支持。
@@ -140,7 +139,6 @@ screenshots/      演示截图
 - 图像处理：[Pillow](https://python-pillow.org/)
 
 ## 已知限制
-
 
 - 仅 Windows（依赖 WebView2）
 - 站点详情接口较慢，搜索结果卡片里的页数/话数是异步补全的（分批回填）
